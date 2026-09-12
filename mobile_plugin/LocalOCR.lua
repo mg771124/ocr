@@ -54,6 +54,12 @@ end
 -- ============================================================
 function _priv.base64_encode(data)
     local b64 = _priv.b64chars
+    local function b64char(idx)
+        if idx == 64 then
+            return "="
+        end
+        return string.sub(b64, idx + 1, idx + 1)
+    end
     local out = {}
     local n = #data
     local i = 1
@@ -67,10 +73,10 @@ function _priv.base64_encode(data)
         local b3 = b and (((b % 16) * 4) + math.floor((c or 0) / 64)) or 64
         local b4 = c and (c % 64) or 64
 
-        table.insert(out, string.sub(b64, b1 + 1, b1 + 1))
-        table.insert(out, string.sub(b64, b2 + 1, b2 + 1))
-        table.insert(out, string.sub(b64, b3 + 1, b3 + 1))
-        table.insert(out, string.sub(b64, b4 + 1, b4 + 1))
+        table.insert(out, b64char(b1))
+        table.insert(out, b64char(b2))
+        table.insert(out, b64char(b3))
+        table.insert(out, b64char(b4))
 
         i = i + 3
     end
