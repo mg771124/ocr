@@ -161,29 +161,29 @@ End If'''
 LocalOCR.SetScreenshotPath "/sdcard/LocalOCR_region.png"'''
     },
     {
-        "anchor": "FindAt",
-        "name": "LocalOCR.FindAt",
+        "anchor": "ocr",
+        "name": "LocalOCR.ocr",
         "brief": "区域内精确查找文字并可选点击",
         "func": "在指定屏幕区域内截图,精确查找目标文字。找到后可选自动点击,坐标保存在 LastFindX/LastFindY。",
         "args": "参数1-4: 区域左上角/右下角坐标(x1,y1,x2,y2)\n参数5: 要查找的文字(字符串)\n参数6: 是否点击(1=点击, 0=不点击)",
         "return": "true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY",
         "example": '''Import "LocalOCR.lua"
 LocalOCR.SetServer "192.168.1.101:8080"
-If LocalOCR.FindAt(100, 200, 400, 500, "开始", 1) = True Then
+If LocalOCR.ocr(100, 200, 400, 500, "开始", 1) = True Then
     TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 Else
     TracePrint "未找到"
 End If'''
     },
     {
-        "anchor": "FuzzyFindAt",
-        "name": "LocalOCR.FuzzyFindAt",
+        "anchor": "ocra",
+        "name": "LocalOCR.ocra",
         "brief": "区域内模糊查找文字并可选点击",
         "func": "在指定屏幕区域内截图,查找包含目标关键字的文字。找到后可选自动点击。",
         "args": "参数1-4: 区域坐标(x1,y1,x2,y2)\n参数5: 关键字(字符串)\n参数6: 是否点击(1=点击, 0=不点击)",
         "return": "true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY",
         "example": '''Import "LocalOCR.lua"
-If LocalOCR.FuzzyFindAt(100, 200, 400, 500, "开始", 0) = True Then
+If LocalOCR.ocra(100, 200, 400, 500, "开始", 0) = True Then
     TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 End If'''
     }

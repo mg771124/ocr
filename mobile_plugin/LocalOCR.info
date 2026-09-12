@@ -36,14 +36,14 @@
 		"Description": "格式: LocalOCR.SetScreenshotPath(图片路径)\n功能: 设置区域查找时临时截图保存的路径\n参数: 图片路径（字符串）, 例如 /sdcard/LocalOCR_region.png",
 		"TranslateTemplate": "设置临时截图路径为 $1"
 	},
-	"FindAt": {
+	"ocr": {
 		"Name": "区域内精确查找文字",
-		"Description": "格式: LocalOCR.FindAt(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并精确查找文字\n参数1-4: 区域左上角/右下角坐标\n参数5: 要查找的文字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
-		"TranslateTemplate": "在区域 $1,$2,$3,$4 查找文字 $5"
+		"Description": "格式: LocalOCR.ocr(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并精确查找文字\n参数1-4: 区域左上角/右下角坐标\n参数5: 要查找的文字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"TranslateTemplate": "在区域 $1,$2,$3,$4 精确查找文字 $5"
 	},
-	"FuzzyFindAt": {
+	"ocra": {
 		"Name": "区域内模糊查找文字",
-		"Description": "格式: LocalOCR.FuzzyFindAt(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并模糊查找文字（包含关键字即可）\n参数1-4: 区域坐标\n参数5: 关键字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"Description": "格式: LocalOCR.ocra(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并模糊查找文字（包含关键字即可）\n参数1-4: 区域坐标\n参数5: 关键字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
 		"TranslateTemplate": "在区域 $1,$2,$3,$4 模糊查找文字 $5"
 	}
 }

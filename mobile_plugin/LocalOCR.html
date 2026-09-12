@@ -165,7 +165,7 @@ LocalOCR.SetScreenshotPath "/sdcard/LocalOCR_region.png"
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
 <tr><th width="100px">命令名称：</th><td class="name">
-<a name="FindAt"></a>LocalOCR.FindAt 区域内精确查找文字并可选点击
+<a name="ocr"></a>LocalOCR.ocr 区域内精确查找文字并可选点击
 </td></tr><tr><th>命令功能：</th><td>
 在指定屏幕区域内截图,精确查找目标文字。找到后可选自动点击,坐标保存在 LastFindX/LastFindY。
 </td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
@@ -178,7 +178,7 @@ true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY
 </th><td class="lizi"><pre>
 Import "LocalOCR.lua"
 LocalOCR.SetServer "192.168.1.101:8080"
-If LocalOCR.FindAt(100, 200, 400, 500, "开始", 1) = True Then
+If LocalOCR.ocr(100, 200, 400, 500, "开始", 1) = True Then
     TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 Else
     TracePrint "未找到"
@@ -187,7 +187,7 @@ End If
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
 <tr><th width="100px">命令名称：</th><td class="name">
-<a name="FuzzyFindAt"></a>LocalOCR.FuzzyFindAt 区域内模糊查找文字并可选点击
+<a name="ocra"></a>LocalOCR.ocra 区域内模糊查找文字并可选点击
 </td></tr><tr><th>命令功能：</th><td>
 在指定屏幕区域内截图,查找包含目标关键字的文字。找到后可选自动点击。
 </td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
@@ -199,7 +199,7 @@ true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY
 </td></tr><tr><th>脚本示例：<br /><span class="red">此为安卓手机语法</span>
 </th><td class="lizi"><pre>
 Import "LocalOCR.lua"
-If LocalOCR.FuzzyFindAt(100, 200, 400, 500, "开始", 0) = True Then
+If LocalOCR.ocra(100, 200, 400, 500, "开始", 0) = True Then
     TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 End If
 </pre></td></tr></table>

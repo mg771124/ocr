@@ -525,7 +525,7 @@ function _priv.find_match(results, text, fuzzy)
     return nil
 end
 
-function LocalOCR.FindAt(x1, y1, x2, y2, text, click)
+function LocalOCR.ocr(x1, y1, x2, y2, text, click)
     click = tonumber(click) or 0
     local path = _priv.default_screenshot_path
     local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
@@ -552,7 +552,7 @@ function LocalOCR.FindAt(x1, y1, x2, y2, text, click)
     return true
 end
 
-function LocalOCR.FuzzyFindAt(x1, y1, x2, y2, text, click)
+function LocalOCR.ocra(x1, y1, x2, y2, text, click)
     click = tonumber(click) or 0
     local path = _priv.default_screenshot_path
     local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
