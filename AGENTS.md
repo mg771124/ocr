@@ -46,3 +46,24 @@ python test_ocr.py
 - 保持 Python 3.8+ 兼容，使用类型注解。
 - 所有端点返回 JSON，包含 `success` 字段。
 - 不要提交 API Key 或凭据。
+
+## 插件文件同步规则
+
+修改 `mobile_plugin/` 下的 `.lua` 或 `.info` 文件后，必须同步到以下两个按键精灵插件目录：
+
+- `C:\ProgramData\aaj\aaj\Plugin\`
+- `C:\Program Files (x86)\nsaj\nsaj\Plugin\`
+
+标准做法：
+
+1. 提醒用户先关闭按键精灵手机助手，避免 `.info` 等文件被占用。
+2. 右键运行 `C:\Users\user\Desktop\ocr\install_plugins.bat`，选择 **以管理员身份运行**。
+3. 重启按键精灵手机助手或刷新插件列表。
+
+备用做法（无法运行批处理时）：
+
+- `aaj` 目录：`Copy-Item mobile_plugin\*.* C:\ProgramData\aaj\aaj\Plugin\`
+- `nsaj` 目录需要管理员权限：
+  ```bat
+  xcopy /Y C:\Users\user\Desktop\ocr\mobile_plugin\*.* "C:\Program Files (x86)\nsaj\nsaj\Plugin\"
+  ```
