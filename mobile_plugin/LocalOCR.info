@@ -1,0 +1,34 @@
+{
+	"Description": "本地OCR服务端调用插件，支持识别图片、查找文字坐标。",
+	"Name": "本地OCR插件",
+	"SetServer": {
+		"Name": "设置服务端地址",
+		"Description": "格式: LocalOCR.SetServer(服务端地址)\n功能: 设置默认OCR服务端地址，例如 192.168.1.101:8080\n参数: 服务端地址（字符串）",
+		"TranslateTemplate": "设置OCR服务端地址为 $1"
+	},
+	"Ping": {
+		"Name": "测试服务端连通",
+		"Description": "格式: LocalOCR.Ping(服务端地址)\n功能: 测试手机到PC服务端是否连通\n参数: 服务端地址（可省略，使用SetServer默认值）\n返回: OK 或 ERROR|错误信息",
+		"TranslateTemplate": "测试OCR服务端 $1 连通性"
+	},
+	"RecognizeStr": {
+		"Name": "识别图片文字(字符串版)",
+		"Description": "格式: LocalOCR.RecognizeStr(服务端地址, 图片路径)\n功能: 识别图片中所有文字并返回字符串结果\n参数1: 服务端地址（可省略）\n参数2: 图片完整路径，例如 /sdcard/screen.png\n返回: text|置信度|x|y|w|h|中心x|中心y;...",
+		"TranslateTemplate": "识别图片 $2 中所有文字"
+	},
+	"FindTextStr": {
+		"Name": "查找文字坐标(字符串版)",
+		"Description": "格式: LocalOCR.FindTextStr(服务端地址, 图片路径, 关键字)\n功能: 在图片中查找指定文字并返回点击坐标\n参数1: 服务端地址（可省略）\n参数2: 图片完整路径\n参数3: 要查找的关键字\n返回: x|y|置信度|文字，未找到返回 ERROR|...",
+		"TranslateTemplate": "在图片 $2 中查找文字 $3"
+	},
+	"Recognize": {
+		"Name": "识别图片文字(表格版)",
+		"Description": "格式: LocalOCR.Recognize(服务端地址, 图片路径)\n功能: 识别图片中所有文字，返回Lua表格\n参数1: 服务端地址（可省略）\n参数2: 图片完整路径\n返回: 表格数组，每个元素包含 text/x/y/w/h/center_x/center_y/confidence",
+		"TranslateTemplate": "识别图片 $2 中所有文字(返回表格)"
+	},
+	"FindText": {
+		"Name": "查找文字坐标(表格版)",
+		"Description": "格式: LocalOCR.FindText(服务端地址, 图片路径, 关键字)\n功能: 查找指定文字并返回坐标表格\n参数1: 服务端地址（可省略）\n参数2: 图片完整路径\n参数3: 要查找的关键字\n返回: {found=true, x=..., y=..., confidence=..., text=...}",
+		"TranslateTemplate": "在图片 $2 中查找文字 $3(返回表格)"
+	}
+}

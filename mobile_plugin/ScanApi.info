@@ -1,0 +1,9 @@
+{
+	"Description": "扫描 LuaAuxLib 中 HTTP/文件相关命令，用于调试插件。",
+	"Name": "扫描API",
+	"Scan": {
+		"Name": "扫描可用命令",
+		"Description": "格式: ScanApi.Scan()\n功能: 遍历 LuaAuxLib，返回包含 url/http/file/base64/encode 关键字的命令列表\n返回: 命令名称=类型的字符串列表",
+		"TranslateTemplate": "扫描 LuaAuxLib 中的 HTTP/文件命令"
+	}
+}
