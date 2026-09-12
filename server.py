@@ -366,11 +366,17 @@ def ocr_simple_endpoint():
         if img is None:
             return f"ERROR\t{err}\n", 400
 
-        backend = request.args.get("backend", "auto")
-        lang = request.args.get("lang", "chi_tra+eng")
-        min_conf = float(request.args.get("min_confidence", "0.0"))
+        force = request.args.get("force", "0") in ("1", "true", "True")
+        enhance = request.args.get("enhance", "1") in ("1", "true", "True")
 
-        engine, results = do_ocr(img, backend=backend, lang=lang, min_confidence=min_conf)
+        if force:
+            results = rapidocr_recognize_force(img, enhance=enhance)
+        else:
+            backend = request.args.get("backend", "auto")
+            lang = request.args.get("lang", "chi_tra+eng")
+            min_conf = float(request.args.get("min_confidence", "0.0"))
+            engine, results = do_ocr(img, backend=backend, lang=lang, min_confidence=min_conf)
+
         results.sort(key=lambda r: (r["y"], r["x"]))
 
         lines = []

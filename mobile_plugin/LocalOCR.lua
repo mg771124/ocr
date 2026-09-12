@@ -550,7 +550,7 @@ function _priv.ocr_force_str(host_port, image_path)
     local b64 = _priv.base64_encode(data)
     local body = '{"image":"' .. b64 .. '"}'
     local header = "Content-Type: application/json"
-    local resp, err2 = _priv.http_post("http://" .. server .. "/ocr_force?enhance=1", body, header, 30)
+    local resp, err2 = _priv.http_post("http://" .. server .. "/ocr_simple?force=1&enhance=1", body, header, 30)
     if not resp then
         return nil, err2
     end
