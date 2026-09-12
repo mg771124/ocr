@@ -164,13 +164,13 @@ LocalOCR.SetScreenshotPath "/sdcard/LocalOCR_region.png"'''
         "anchor": "ocr",
         "name": "LocalOCR.ocr",
         "brief": "区域内精确查找文字并可选点击",
-        "func": "在指定屏幕区域内截图,精确查找目标文字。找到后可选自动点击,坐标保存在 LastFindX/LastFindY。",
+        "func": "在指定屏幕区域内截图,精确查找目标文字。找到后可选自动点击,坐标通过函数获取。",
         "args": "参数1-4: 区域左上角/右下角坐标(x1,y1,x2,y2)\n参数5: 要查找的文字(字符串)\n参数6: 是否点击(1=点击, 0=不点击)",
-        "return": "true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY",
+        "return": "true=找到, false=未找到。坐标: LocalOCR.LastFindX() / LocalOCR.LastFindY()",
         "example": '''Import "LocalOCR.lua"
 LocalOCR.SetServer "192.168.1.101:8080"
 If LocalOCR.ocr(100, 200, 400, 500, "开始", 1) = True Then
-    TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+    TracePrint "点击了 " & LocalOCR.LastFindX() & "," & LocalOCR.LastFindY()
 Else
     TracePrint "未找到"
 End If'''
@@ -181,11 +181,44 @@ End If'''
         "brief": "区域内模糊查找文字并可选点击",
         "func": "在指定屏幕区域内截图,查找包含目标关键字的文字。找到后可选自动点击。",
         "args": "参数1-4: 区域坐标(x1,y1,x2,y2)\n参数5: 关键字(字符串)\n参数6: 是否点击(1=点击, 0=不点击)",
-        "return": "true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY",
+        "return": "true=找到, false=未找到。坐标: LocalOCR.LastFindX() / LocalOCR.LastFindY()",
         "example": '''Import "LocalOCR.lua"
 If LocalOCR.ocra(100, 200, 400, 500, "开始", 0) = True Then
-    TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+    TracePrint "找到在 " & LocalOCR.LastFindX() & "," & LocalOCR.LastFindY()
 End If'''
+    },
+    {
+        "anchor": "LastFindX",
+        "name": "LocalOCR.LastFindX",
+        "brief": "获取上次找到文字的X坐标",
+        "func": "返回ocr/ocra上次找到文字的实际屏幕X坐标。",
+        "args": "无参数",
+        "return": "整数型X坐标",
+        "example": '''Import "LocalOCR.lua"
+LocalOCR.ocr 0, 0, 0, 0, "TEST", 0
+TracePrint LocalOCR.LastFindX()'''
+    },
+    {
+        "anchor": "LastFindY",
+        "name": "LocalOCR.LastFindY",
+        "brief": "获取上次找到文字的Y坐标",
+        "func": "返回ocr/ocra上次找到文字的实际屏幕Y坐标。",
+        "args": "无参数",
+        "return": "整数型Y坐标",
+        "example": '''Import "LocalOCR.lua"
+LocalOCR.ocr 0, 0, 0, 0, "TEST", 0
+TracePrint LocalOCR.LastFindY()'''
+    },
+    {
+        "anchor": "LastFindText",
+        "name": "LocalOCR.LastFindText",
+        "brief": "获取上次找到的文字",
+        "func": "返回ocr/ocra上次实际匹配到的完整文字。",
+        "args": "无参数",
+        "return": "字符串",
+        "example": '''Import "LocalOCR.lua"
+LocalOCR.ocra 0, 0, 0, 0, "T", 0
+TracePrint LocalOCR.LastFindText()'''
     }
 ]
 

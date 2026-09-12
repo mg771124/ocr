@@ -38,12 +38,27 @@
 	},
 	"ocr": {
 		"Name": "区域内精确查找文字",
-		"Description": "格式: LocalOCR.ocr(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并精确查找文字\n参数1-4: 区域左上角/右下角坐标\n参数5: 要查找的文字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"Description": "格式: LocalOCR.ocr(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并精确查找文字\n参数1-4: 区域左上角/右下角坐标\n参数5: 要查找的文字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标通过 LocalOCR.LastFindX() / LocalOCR.LastFindY() 获取",
 		"TranslateTemplate": "在区域 $1,$2,$3,$4 精确查找文字 $5"
 	},
 	"ocra": {
 		"Name": "区域内模糊查找文字",
-		"Description": "格式: LocalOCR.ocra(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并模糊查找文字（包含关键字即可）\n参数1-4: 区域坐标\n参数5: 关键字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"Description": "格式: LocalOCR.ocra(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并模糊查找文字（包含关键字即可）\n参数1-4: 区域坐标\n参数5: 关键字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标通过 LocalOCR.LastFindX() / LocalOCR.LastFindY() 获取",
 		"TranslateTemplate": "在区域 $1,$2,$3,$4 模糊查找文字 $5"
+	},
+	"LastFindX": {
+		"Name": "获取上次找到的X坐标",
+		"Description": "格式: LocalOCR.LastFindX()\n功能: 获取ocr/ocra上次找到文字的实际屏幕X坐标\n返回: 整数型X坐标",
+		"TranslateTemplate": "获取上次找到文字的X坐标"
+	},
+	"LastFindY": {
+		"Name": "获取上次找到的Y坐标",
+		"Description": "格式: LocalOCR.LastFindY()\n功能: 获取ocr/ocra上次找到文字的实际屏幕Y坐标\n返回: 整数型Y坐标",
+		"TranslateTemplate": "获取上次找到文字的Y坐标"
+	},
+	"LastFindText": {
+		"Name": "获取上次找到的文字",
+		"Description": "格式: LocalOCR.LastFindText()\n功能: 获取ocr/ocra上次实际匹配到的完整文字\n返回: 字符串",
+		"TranslateTemplate": "获取上次找到的文字"
 	}
 }

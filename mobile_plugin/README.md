@@ -33,7 +33,7 @@
 | `LocalOCR.ocra x1, y1, x2, y2, text, click` | 在指定区域模糊查找文字（包含即可），找到返回 `true` |
 
 `host_port` 可省略，使用 `SetServer` 设置的默认值。
-找到文字后，坐标会写入 `LocalOCR.LastFindX` 和 `LocalOCR.LastFindY`。
+找到文字后，坐标通过 `LocalOCR.LastFindX()` 和 `LocalOCR.LastFindY()` 获取。
 
 ## 脚本示例
 
@@ -49,14 +49,14 @@ TracePrint ping
 
 // 2. 区域内查找"开始"并自动点击
 If LocalOCR.ocr(100, 200, 400, 500, "开始", 1) = True Then
-    TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+    TracePrint "点击了 " & LocalOCR.LastFindX() & "," & LocalOCR.LastFindY()
 Else
     TracePrint "未找到"
 End If
 
 // 3. 区域内模糊查找包含"T"的文字，不点击
 If LocalOCR.ocra(100, 200, 400, 500, "T", 0) = True Then
-    TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+    TracePrint "找到在 " & LocalOCR.LastFindX() & "," & LocalOCR.LastFindY()
 End If
 ```
 

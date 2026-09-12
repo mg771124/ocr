@@ -24,10 +24,22 @@ QMPlugin = LocalOCR
 
 _priv.default_server = "192.168.1.100:8080"
 _priv.default_screenshot_path = "/sdcard/LocalOCR_region.png"
-LocalOCR.LastFindX = 0
-LocalOCR.LastFindY = 0
-LocalOCR.LastFindText = ""
+_priv.last_find_x = 0
+_priv.last_find_y = 0
+_priv.last_find_text = ""
 _priv.b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+function LocalOCR.LastFindX()
+    return _priv.last_find_x
+end
+
+function LocalOCR.LastFindY()
+    return _priv.last_find_y
+end
+
+function LocalOCR.LastFindText()
+    return _priv.last_find_text
+end
 
 function LocalOCR.SetScreenshotPath(path)
     _priv.default_screenshot_path = tostring(path)
@@ -543,9 +555,9 @@ function LocalOCR.ocr(x1, y1, x2, y2, text, click)
     end
     local sx = x1 + match.center_x
     local sy = y1 + match.center_y
-    LocalOCR.LastFindX = sx
-    LocalOCR.LastFindY = sy
-    LocalOCR.LastFindText = match.text
+    _priv.last_find_x = sx
+    _priv.last_find_y = sy
+    _priv.last_find_text = match.text
     if click == 1 then
         _priv.click(sx, sy)
     end
@@ -570,9 +582,9 @@ function LocalOCR.ocra(x1, y1, x2, y2, text, click)
     end
     local sx = x1 + match.center_x
     local sy = y1 + match.center_y
-    LocalOCR.LastFindX = sx
-    LocalOCR.LastFindY = sy
-    LocalOCR.LastFindText = match.text
+    _priv.last_find_x = sx
+    _priv.last_find_y = sy
+    _priv.last_find_text = match.text
     if click == 1 then
         _priv.click(sx, sy)
     end
