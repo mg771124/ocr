@@ -677,3 +677,20 @@ function LocalOCR.ocrText(x1, y1, x2, y2)
     end
     return table.concat(texts, "")
 end
+
+function LocalOCR.DebugOcrText(x1, y1, x2, y2)
+    local path = _priv.default_screenshot_path
+    local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
+    if not ok then
+        return "ERROR|snap: " .. tostring(err)
+    end
+    local data, err2 = _priv.read_file(path)
+    if not data then
+        return "ERROR|read: " .. tostring(err2)
+    end
+    local b64 = _priv.base64_encode(data)
+    local body = '{"image":"' .. b64 .. '"}'
+    local header = "Content-Type: application/json"
+    local ret, err3 = _priv.http_post("http://" .. _priv.default_server .. "/ocr_simple?force=1&enhance=1", body, header, 30)
+    return "size=" .. tostring(#data) .. ",body=" .. tostring(#body) .. ",ret=" .. tostring(ret) .. ",err=" .. tostring(err3)
+end
