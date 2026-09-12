@@ -49,14 +49,23 @@ python test_ocr.py
 
 ## 插件文件同步规则
 
-修改 `mobile_plugin/` 下的 `.lua` 或 `.info` 文件后，必须同步到以下两个按键精灵插件目录：
+修改 `mobile_plugin/` 下的 `.lua`、`.info` 或 `.html` 文件后，必须同步到以下两个按键精灵插件目录：
 
 - `C:\ProgramData\aaj\aaj\Plugin\`
 - `C:\Program Files (x86)\nsaj\nsaj\Plugin\`
 
+同步的文件包括：
+
+- `LocalOCR.lua`
+- `LocalOCR.info`
+- `LocalOCR.html`
+- `ScanApi.lua`
+- `ScanApi.info`
+- `ScanApi.html`
+
 标准做法：
 
-1. 提醒用户先关闭按键精灵手机助手，避免 `.info` 等文件被占用。
+1. 提醒用户先关闭按键精灵手机助手，避免 `.info`/`.html` 等文件被占用。
 2. 右键运行 `C:\Users\user\Desktop\ocr\install_plugins.bat`，选择 **以管理员身份运行**。
 3. 重启按键精灵手机助手或刷新插件列表。
 

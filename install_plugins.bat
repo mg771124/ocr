@@ -2,62 +2,53 @@
 chcp 65001 >nul
 set SRC_DIR=C:\Users\user\Desktop\ocr\mobile_plugin
 
-echo Installing LocalOCR.lua and ScanApi.lua...
+echo Installing LocalOCR / ScanApi plugin files (lua + info + html)...
 
-xcopy /Y "%SRC_DIR%\LocalOCR.lua" "C:\Program Files (x86)\nsaj\nsaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] nsaj LocalOCR.lua (need admin)
-) else (
-    echo [OK] nsaj LocalOCR.lua
-)
+set "DEST1=C:\Program Files (x86)\nsaj\nsaj\Plugin"
+set "DEST2=C:\ProgramData\aaj\aaj\Plugin"
 
-xcopy /Y "%SRC_DIR%\LocalOCR.info" "C:\Program Files (x86)\nsaj\nsaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] nsaj LocalOCR.info (need admin)
-) else (
-    echo [OK] nsaj LocalOCR.info
-)
+for %%F in (LocalOCR ScanApi) do (
+    xcopy /Y "%SRC_DIR%\%%F.lua" "%DEST1%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] nsaj %%F.lua (need admin)
+    ) else (
+        echo [OK] nsaj %%F.lua
+    )
 
-xcopy /Y "%SRC_DIR%\ScanApi.lua" "C:\Program Files (x86)\nsaj\nsaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] nsaj ScanApi.lua (need admin)
-) else (
-    echo [OK] nsaj ScanApi.lua
-)
+    xcopy /Y "%SRC_DIR%\%%F.info" "%DEST1%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] nsaj %%F.info (need admin)
+    ) else (
+        echo [OK] nsaj %%F.info
+    )
 
-xcopy /Y "%SRC_DIR%\ScanApi.info" "C:\Program Files (x86)\nsaj\nsaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] nsaj ScanApi.info (need admin)
-) else (
-    echo [OK] nsaj ScanApi.info
-)
+    xcopy /Y "%SRC_DIR%\%%F.html" "%DEST1%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] nsaj %%F.html (need admin)
+    ) else (
+        echo [OK] nsaj %%F.html
+    )
 
-xcopy /Y "%SRC_DIR%\LocalOCR.lua" "C:\ProgramData\aaj\aaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] aaj LocalOCR.lua
-) else (
-    echo [OK] aaj LocalOCR.lua
-)
+    xcopy /Y "%SRC_DIR%\%%F.lua" "%DEST2%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] aaj %%F.lua
+    ) else (
+        echo [OK] aaj %%F.lua
+    )
 
-xcopy /Y "%SRC_DIR%\LocalOCR.info" "C:\ProgramData\aaj\aaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] aaj LocalOCR.info
-) else (
-    echo [OK] aaj LocalOCR.info
-)
+    xcopy /Y "%SRC_DIR%\%%F.info" "%DEST2%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] aaj %%F.info
+    ) else (
+        echo [OK] aaj %%F.info
+    )
 
-xcopy /Y "%SRC_DIR%\ScanApi.lua" "C:\ProgramData\aaj\aaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] aaj ScanApi.lua
-) else (
-    echo [OK] aaj ScanApi.lua
-)
-
-xcopy /Y "%SRC_DIR%\ScanApi.info" "C:\ProgramData\aaj\aaj\Plugin" >nul 2>&1
-if %errorlevel% neq 0 (
-    echo [FAIL] aaj ScanApi.info
-) else (
-    echo [OK] aaj ScanApi.info
+    xcopy /Y "%SRC_DIR%\%%F.html" "%DEST2%" >nul 2>&1
+    if errorlevel 1 (
+        echo [FAIL] aaj %%F.html
+    ) else (
+        echo [OK] aaj %%F.html
+    )
 )
 
 echo.

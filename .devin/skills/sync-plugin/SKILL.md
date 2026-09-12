@@ -19,8 +19,10 @@ permissions:
 
 - `LocalOCR.lua`
 - `LocalOCR.info`
+- `LocalOCR.html`
 - `ScanApi.lua`
 - `ScanApi.info`
+- `ScanApi.html`
 
 操作步骤：
 
