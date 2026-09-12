@@ -188,6 +188,17 @@ If LocalOCR.ocra(100, 200, 400, 500, "开始", 0) = True Then
 End If'''
     },
     {
+        "anchor": "识别",
+        "name": "LocalOCR.识别",
+        "brief": "识别区域内文字",
+        "func": "在指定屏幕区域内截图,直接返回识别到的文字内容。",
+        "args": "参数1-4: 区域坐标(x1,y1,x2,y2)",
+        "return": "字符串: 识别到的文字（多行会拼接）,无结果返回空字符串",
+        "example": '''Import "LocalOCR.lua"
+Dim text = LocalOCR.识别(100, 200, 400, 250)
+TracePrint text'''
+    },
+    {
         "anchor": "LastFindX",
         "name": "LocalOCR.LastFindX",
         "brief": "获取上次找到文字的X坐标",

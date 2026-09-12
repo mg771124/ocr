@@ -606,3 +606,24 @@ function LocalOCR.ocra(x1, y1, x2, y2, text, click)
     end
     return true
 end
+
+function LocalOCR.识别(x1, y1, x2, y2)
+    local path = _priv.default_screenshot_path
+    local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
+    if not ok then
+        return ""
+    end
+    local ret, err2 = _priv.ocr_force_str("", path)
+    if not ret or string.sub(ret, 1, 6) == "ERROR|" then
+        return ""
+    end
+    local results = _priv.parse_results_str(ret)
+    if #results == 0 then
+        return ""
+    end
+    local texts = {}
+    for _, r in ipairs(results) do
+        table.insert(texts, r.text)
+    end
+    return table.concat(texts, "")
+end

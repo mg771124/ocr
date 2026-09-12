@@ -206,6 +206,22 @@ End If
 
 <table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
 <tr><th width="100px">命令名称：</th><td class="name">
+<a name="识别"></a>LocalOCR.识别 识别区域内文字
+</td></tr><tr><th>命令功能：</th><td>
+在指定屏幕区域内截图,直接返回识别到的文字内容。
+</td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
+参数1-4: 区域坐标(x1,y1,x2,y2)
+</pre></td></tr><tr><th>返回值：</th><td class="fanhui">
+字符串: 识别到的文字（多行会拼接）,无结果返回空字符串
+</td></tr><tr><th>脚本示例：<br /><span class="red">此为安卓手机语法</span>
+</th><td class="lizi"><pre>
+Import "LocalOCR.lua"
+Dim text = LocalOCR.识别(100, 200, 400, 250)
+TracePrint text
+</pre></td></tr></table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
+<tr><th width="100px">命令名称：</th><td class="name">
 <a name="LastFindX"></a>LocalOCR.LastFindX 获取上次找到文字的X坐标
 </td></tr><tr><th>命令功能：</th><td>
 返回ocr/ocra上次找到文字的实际屏幕X坐标。

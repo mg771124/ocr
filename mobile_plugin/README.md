@@ -29,6 +29,7 @@
 | `LocalOCR.RecognizeStr host_port, image_path` | 识别整张图片，返回 `text\|conf\|x\|y\|w\|h\|cx\|cy;...` |
 | `LocalOCR.FindTextStr host_port, image_path, keyword` | 查找文字，返回 `x\|y\|conf\|text`，未找到返回 `ERROR|...` |
 | `LocalOCR.SetScreenshotPath path` | 设置区域查找时临时截图路径，默认 `/sdcard/LocalOCR_region.png` |
+| `LocalOCR.识别 x1, y1, x2, y2` | 识别指定区域内所有文字，返回文字字符串 |
 | `LocalOCR.ocr x1, y1, x2, y2, text, click` | 在指定区域精确查找文字，找到返回 `true`，`click=1` 自动点击 |
 | `LocalOCR.ocra x1, y1, x2, y2, text, click` | 在指定区域模糊查找文字（包含即可），找到返回 `true` |
 
@@ -54,7 +55,11 @@ Else
     TracePrint "未找到"
 End If
 
-// 3. 区域内模糊查找包含"T"的文字，不点击
+// 3. 识别区域内文字
+Dim text = LocalOCR.识别(100, 200, 400, 250)
+TracePrint "识别结果: " & text
+
+// 4. 区域内模糊查找包含"T"的文字，不点击
 If LocalOCR.ocra(100, 200, 400, 500, "T", 0) = True Then
     TracePrint "找到在 " & LocalOCR.LastFindX() & "," & LocalOCR.LastFindY()
 End If
