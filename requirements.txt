@@ -1,0 +1,6 @@
+flask>=2.0.0
+pillow>=9.0.0
+rapidocr-onnxruntime>=1.2.0
+pytesseract>=0.3.10
+numpy>=1.21.0
+waitress>=2.1.0
