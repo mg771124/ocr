@@ -320,6 +320,34 @@ end
 -- ============================================================
 -- Public API
 -- ============================================================
+function LocalOCR.Version()
+    return "1.2.0"
+end
+
+function LocalOCR.DebugPost(url, body, header, timeout)
+    timeout = tonumber(timeout) or 30
+    local f, name = _priv.find_http_post()
+    if not f then
+        return "ERROR|no http command"
+    end
+    local req = { url = url, data = body or "", code = "UTF-8" }
+    if header and header ~= "" then
+        local k, v = string.match(header, "([^:]+):%s*(.+)")
+        if k then
+            req.header = { [k] = v }
+        else
+            req.header = header
+        end
+    end
+    req.timeout = timeout
+    local ok, r1, r2, r3 = pcall(f, req)
+    local parts = { name, "ok=" .. tostring(ok) }
+    for i, v in ipairs({r1, r2, r3}) do
+        table.insert(parts, "r" .. i .. "=" .. tostring(v))
+    end
+    return table.concat(parts, "|")
+end
+
 function LocalOCR.Recognize(host_port, image_path)
     local server = host_port or _priv.default_server
 
