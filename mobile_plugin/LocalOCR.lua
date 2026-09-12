@@ -140,12 +140,12 @@ function _priv.find_http_post()
     end
 
     local names = {
-        "URL_OperationPost",
-        "Url_OperationPost",
-        "url_OperationPost",
         "NET_httpPost",
         "Net_httpPost",
         "net_httpPost",
+        "URL_OperationPost",
+        "Url_OperationPost",
+        "url_OperationPost",
         "Url.Post",
         "URL.Post",
         "url.Post",
