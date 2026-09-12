@@ -193,7 +193,7 @@ End If'''
         "brief": "识别区域内文字",
         "func": "在指定屏幕区域内截图,直接返回识别到的文字内容。",
         "args": "参数1-4: 区域坐标(x1,y1,x2,y2)",
-        "return": "字符串: 识别到的文字（多行会拼接）,无结果返回空字符串",
+        "return": "字符串: 识别到的文字（多行会拼接）; 无结果返回空字符串; 出错返回 ERROR|...",
         "example": '''Import "LocalOCR.lua"
 Dim text = LocalOCR.ocrText(100, 200, 400, 250)
 TracePrint text'''

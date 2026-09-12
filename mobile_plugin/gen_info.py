@@ -58,7 +58,7 @@ localocr = {
     },
     "ocrText": {
         "Name": "识别区域内文字",
-        "Description": "格式: LocalOCR.ocrText(x1, y1, x2, y2)\n功能: 在指定屏幕区域内截图并识别所有文字\n参数1-4: 区域左上角/右下角坐标\n返回: 识别到的文字字符串（多行结果会拼接），无结果返回空字符串",
+        "Description": "格式: LocalOCR.ocrText(x1, y1, x2, y2)\n功能: 在指定屏幕区域内截图并识别所有文字\n参数1-4: 区域左上角/右下角坐标\n返回: 识别到的文字字符串（多行结果会拼接），无结果返回空字符串；出错返回 ERROR|...",
         "TranslateTemplate": "识别区域 $1,$2,$3,$4 内的文字"
     },
     "LastFindX": {

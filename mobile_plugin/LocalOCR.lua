@@ -445,14 +445,18 @@ end
 -- Region search with optional click
 -- ============================================================
 function _priv.find_snapshot()
-    if type(LuaAuxLib) ~= "table" then
-        return nil
-    end
     local names = {"SnapShot", "snapshot", "Screenshot", "screenshot"}
+    if type(LuaAuxLib) == "table" then
+        for _, name in ipairs(names) do
+            local f = LuaAuxLib[name]
+            if type(f) == "function" then
+                return f
+            end
+        end
+    end
     for _, name in ipairs(names) do
-        local f = LuaAuxLib[name]
-        if type(f) == "function" then
-            return f
+        if type(_G[name]) == "function" then
+            return _G[name]
         end
     end
     return nil
@@ -611,11 +615,14 @@ function LocalOCR.ocrText(x1, y1, x2, y2)
     local path = _priv.default_screenshot_path
     local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
     if not ok then
-        return ""
+        return "ERROR|snap: " .. tostring(err)
     end
     local ret, err2 = _priv.ocr_force_str("", path)
-    if not ret or string.sub(ret, 1, 6) == "ERROR|" then
-        return ""
+    if not ret then
+        return "ERROR|net: " .. tostring(err2)
+    end
+    if string.sub(ret, 1, 6) == "ERROR|" then
+        return ret
     end
     local results = _priv.parse_results_str(ret)
     if #results == 0 then
