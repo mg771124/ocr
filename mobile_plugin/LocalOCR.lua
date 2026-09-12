@@ -23,7 +23,15 @@ local _priv = {}
 QMPlugin = LocalOCR
 
 _priv.default_server = "192.168.1.100:8080"
+_priv.default_screenshot_path = "/sdcard/LocalOCR_region.png"
+LocalOCR.LastFindX = 0
+LocalOCR.LastFindY = 0
+LocalOCR.LastFindText = ""
 _priv.b64chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+function LocalOCR.SetScreenshotPath(path)
+    _priv.default_screenshot_path = tostring(path)
+end
 
 function LocalOCR.SetServer(host_port)
     _priv.default_server = tostring(host_port)
@@ -419,4 +427,154 @@ function LocalOCR.Ping(host_port)
         return "OK"
     end
     return "ERROR|unexpected response: " .. tostring(resp)
+end
+
+-- ============================================================
+-- Region search with optional click
+-- ============================================================
+function _priv.find_snapshot()
+    if type(LuaAuxLib) ~= "table" then
+        return nil
+    end
+    local names = {"SnapShot", "snapshot", "Screenshot", "screenshot"}
+    for _, name in ipairs(names) do
+        local f = LuaAuxLib[name]
+        if type(f) == "function" then
+            return f
+        end
+    end
+    return nil
+end
+
+function _priv.capture_region(path, x1, y1, x2, y2)
+    local f = _priv.find_snapshot()
+    if not f then
+        return nil, "SnapShot not found"
+    end
+    local ok, err = pcall(f, path, x1, y1, x2, y2)
+    if not ok then
+        return nil, tostring(err)
+    end
+    return true
+end
+
+function _priv.find_touch()
+    if type(LuaAuxLib) == "table" then
+        local names = {"Touch", "touch"}
+        for _, name in ipairs(names) do
+            local f = LuaAuxLib[name]
+            if type(f) == "function" then
+                return f
+            end
+        end
+    end
+    if type(_G["Touch"]) == "function" then
+        return _G["Touch"]
+    end
+    return nil
+end
+
+function _priv.click(x, y)
+    local f = _priv.find_touch()
+    if not f then
+        return nil, "Touch not found"
+    end
+    local ok, err = pcall(f, x, y)
+    if not ok then
+        return nil, tostring(err)
+    end
+    return true
+end
+
+function _priv.parse_results_str(s)
+    local out = {}
+    if not s or s == "" then
+        return out
+    end
+    local items = _priv.split(s, ";")
+    for _, item in ipairs(items) do
+        local cols = _priv.split(item, "|")
+        if #cols >= 8 then
+            table.insert(out, {
+                text = cols[1] or "",
+                confidence = tonumber(cols[2]) or 0,
+                x = tonumber(cols[3]) or 0,
+                y = tonumber(cols[4]) or 0,
+                w = tonumber(cols[5]) or 0,
+                h = tonumber(cols[6]) or 0,
+                center_x = tonumber(cols[7]) or 0,
+                center_y = tonumber(cols[8]) or 0,
+            })
+        end
+    end
+    return out
+end
+
+function _priv.find_match(results, text, fuzzy)
+    for _, r in ipairs(results) do
+        if fuzzy then
+            if string.find(r.text, text, 1, true) then
+                return r
+            end
+        else
+            if r.text == text then
+                return r
+            end
+        end
+    end
+    return nil
+end
+
+function LocalOCR.FindAt(x1, y1, x2, y2, text, click)
+    click = tonumber(click) or 0
+    local path = _priv.default_screenshot_path
+    local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
+    if not ok then
+        return false
+    end
+    local ret, err2 = LocalOCR.RecognizeStr("", path)
+    if not ret or string.sub(ret, 1, 6) == "ERROR|" then
+        return false
+    end
+    local results = _priv.parse_results_str(ret)
+    local match = _priv.find_match(results, text, false)
+    if not match then
+        return false
+    end
+    local sx = x1 + match.center_x
+    local sy = y1 + match.center_y
+    LocalOCR.LastFindX = sx
+    LocalOCR.LastFindY = sy
+    LocalOCR.LastFindText = match.text
+    if click == 1 then
+        _priv.click(sx, sy)
+    end
+    return true
+end
+
+function LocalOCR.FuzzyFindAt(x1, y1, x2, y2, text, click)
+    click = tonumber(click) or 0
+    local path = _priv.default_screenshot_path
+    local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
+    if not ok then
+        return false
+    end
+    local ret, err2 = LocalOCR.RecognizeStr("", path)
+    if not ret or string.sub(ret, 1, 6) == "ERROR|" then
+        return false
+    end
+    local results = _priv.parse_results_str(ret)
+    local match = _priv.find_match(results, text, true)
+    if not match then
+        return false
+    end
+    local sx = x1 + match.center_x
+    local sy = y1 + match.center_y
+    LocalOCR.LastFindX = sx
+    LocalOCR.LastFindY = sy
+    LocalOCR.LastFindText = match.text
+    if click == 1 then
+        _priv.click(sx, sy)
+    end
+    return true
 end

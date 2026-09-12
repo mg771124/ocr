@@ -147,5 +147,61 @@ Else
     TracePrint ret["error"]
 End If
 </pre></td></tr></table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
+<tr><th width="100px">命令名称：</th><td class="name">
+<a name="SetScreenshotPath"></a>LocalOCR.SetScreenshotPath 设置区域查找时临时截图路径
+</td></tr><tr><th>命令功能：</th><td>
+设置FindAt/FuzzyFindAt在区域内截图保存的临时文件路径。
+</td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
+参数1: 图片路径(字符串), 例如 /sdcard/LocalOCR_region.png
+</pre></td></tr><tr><th>返回值：</th><td class="fanhui">
+无
+</td></tr><tr><th>脚本示例：<br /><span class="red">此为安卓手机语法</span>
+</th><td class="lizi"><pre>
+Import "LocalOCR.lua"
+LocalOCR.SetScreenshotPath "/sdcard/LocalOCR_region.png"
+</pre></td></tr></table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
+<tr><th width="100px">命令名称：</th><td class="name">
+<a name="FindAt"></a>LocalOCR.FindAt 区域内精确查找文字并可选点击
+</td></tr><tr><th>命令功能：</th><td>
+在指定屏幕区域内截图,精确查找目标文字。找到后可选自动点击,坐标保存在 LastFindX/LastFindY。
+</td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
+参数1-4: 区域左上角/右下角坐标(x1,y1,x2,y2)
+参数5: 要查找的文字(字符串)
+参数6: 是否点击(1=点击, 0=不点击)
+</pre></td></tr><tr><th>返回值：</th><td class="fanhui">
+true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY
+</td></tr><tr><th>脚本示例：<br /><span class="red">此为安卓手机语法</span>
+</th><td class="lizi"><pre>
+Import "LocalOCR.lua"
+LocalOCR.SetServer "192.168.1.101:8080"
+If LocalOCR.FindAt(100, 200, 400, 500, "开始", 1) = True Then
+    TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+Else
+    TracePrint "未找到"
+End If
+</pre></td></tr></table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" class="ts">
+<tr><th width="100px">命令名称：</th><td class="name">
+<a name="FuzzyFindAt"></a>LocalOCR.FuzzyFindAt 区域内模糊查找文字并可选点击
+</td></tr><tr><th>命令功能：</th><td>
+在指定屏幕区域内截图,查找包含目标关键字的文字。找到后可选自动点击。
+</td></tr><tr><th>参数说明：</th><td class="canshu"><pre>
+参数1-4: 区域坐标(x1,y1,x2,y2)
+参数5: 关键字(字符串)
+参数6: 是否点击(1=点击, 0=不点击)
+</pre></td></tr><tr><th>返回值：</th><td class="fanhui">
+true=找到, false=未找到。点击坐标写入 LocalOCR.LastFindX / LocalOCR.LastFindY
+</td></tr><tr><th>脚本示例：<br /><span class="red">此为安卓手机语法</span>
+</th><td class="lizi"><pre>
+Import "LocalOCR.lua"
+If LocalOCR.FuzzyFindAt(100, 200, 400, 500, "开始", 0) = True Then
+    TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
+End If
+</pre></td></tr></table>
 </body>
 </html>

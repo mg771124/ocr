@@ -30,5 +30,20 @@
 		"Name": "查找文字坐标(表格版)",
 		"Description": "格式: LocalOCR.FindText(服务端地址, 图片路径, 关键字)\n功能: 查找指定文字并返回坐标表格\n参数1: 服务端地址（可省略）\n参数2: 图片完整路径\n参数3: 要查找的关键字\n返回: {found=true, x=..., y=..., confidence=..., text=...}",
 		"TranslateTemplate": "在图片 $2 中查找文字 $3(返回表格)"
+	},
+	"SetScreenshotPath": {
+		"Name": "设置截图临时路径",
+		"Description": "格式: LocalOCR.SetScreenshotPath(图片路径)\n功能: 设置区域查找时临时截图保存的路径\n参数: 图片路径（字符串）, 例如 /sdcard/LocalOCR_region.png",
+		"TranslateTemplate": "设置临时截图路径为 $1"
+	},
+	"FindAt": {
+		"Name": "区域内精确查找文字",
+		"Description": "格式: LocalOCR.FindAt(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并精确查找文字\n参数1-4: 区域左上角/右下角坐标\n参数5: 要查找的文字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"TranslateTemplate": "在区域 $1,$2,$3,$4 查找文字 $5"
+	},
+	"FuzzyFindAt": {
+		"Name": "区域内模糊查找文字",
+		"Description": "格式: LocalOCR.FuzzyFindAt(x1, y1, x2, y2, 关键字, 是否点击)\n功能: 在指定屏幕区域内截图并模糊查找文字（包含关键字即可）\n参数1-4: 区域坐标\n参数5: 关键字（字符串）\n参数6: 是否点击（1=点击, 0=不点击）\n返回: true=找到并可选点击, false=未找到\n找到后坐标保存在 LocalOCR.LastFindX / LastFindY",
+		"TranslateTemplate": "在区域 $1,$2,$3,$4 模糊查找文字 $5"
 	}
 }

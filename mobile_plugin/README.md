@@ -28,8 +28,12 @@
 | `LocalOCR.Ping host_port` | 测试手机到 PC 服务端的连通性，返回 `"OK"` 或 `"ERROR|..."` |
 | `LocalOCR.RecognizeStr host_port, image_path` | 识别整张图片，返回 `text\|conf\|x\|y\|w\|h\|cx\|cy;...` |
 | `LocalOCR.FindTextStr host_port, image_path, keyword` | 查找文字，返回 `x\|y\|conf\|text`，未找到返回 `ERROR|...` |
+| `LocalOCR.SetScreenshotPath path` | 设置区域查找时临时截图路径，默认 `/sdcard/LocalOCR_region.png` |
+| `LocalOCR.FindAt x1, y1, x2, y2, text, click` | 在指定区域精确查找文字，找到返回 `true`，`click=1` 自动点击 |
+| `LocalOCR.FuzzyFindAt x1, y1, x2, y2, text, click` | 在指定区域模糊查找文字（包含即可），找到返回 `true` |
 
 `host_port` 可省略，使用 `SetServer` 设置的默认值。
+找到文字后，坐标会写入 `LocalOCR.LastFindX` 和 `LocalOCR.LastFindY`。
 
 ## 脚本示例
 
@@ -43,32 +47,16 @@ LocalOCR.SetServer "192.168.1.101:8080"
 Dim ping = LocalOCR.Ping("")
 TracePrint ping
 
-// 2. 截图并识别
-Dim 截图路径 = "/sdcard/screen.png"
-SnapShot 截图路径
-
-Dim ret = LocalOCR.RecognizeStr("", 截图路径)
-TracePrint ret
-
-// 3. 遍历结果
-Dim lines = Split(ret, ";")
-For i = 0 To UBound(lines)
-    Dim cols = Split(lines(i), "|")
-    If UBound(cols) >= 7 Then
-        Dim text = cols(0)
-        Dim cx = cols(6)
-        Dim cy = cols(7)
-        TracePrint text & " (" & cx & "," & cy & ")"
-    End If
-Next
-
-// 4. 查找文字并点击
-Dim clickRet = LocalOCR.FindTextStr("", 截图路径, "冒險")
-If Left(clickRet, 5) <> "ERROR" Then
-    Dim c = Split(clickRet, "|")
-    Touch c(0), c(1)
+// 2. 区域内查找"开始"并自动点击
+If LocalOCR.FindAt(100, 200, 400, 500, "开始", 1) = True Then
+    TracePrint "点击了 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 Else
     TracePrint "未找到"
+End If
+
+// 3. 区域内模糊查找包含"T"的文字，不点击
+If LocalOCR.FuzzyFindAt(100, 200, 400, 500, "T", 0) = True Then
+    TracePrint "找到在 " & LocalOCR.LastFindX & "," & LocalOCR.LastFindY
 End If
 ```
 
