@@ -143,6 +143,9 @@ function _priv.find_http_post()
         "URL_OperationPost",
         "Url_OperationPost",
         "url_OperationPost",
+        "NET_httpPost",
+        "Net_httpPost",
+        "net_httpPost",
         "Url.Post",
         "URL.Post",
         "url.Post",
@@ -232,7 +235,7 @@ function _priv.http_post(url, body, header, timeout)
             last_err = tostring(r1)
             return nil
         end
-        if r1 == false then
+        if r1 == false or r1 == 0 then
             last_err = tostring(r2 or "request failed")
             return nil
         end
@@ -246,24 +249,36 @@ function _priv.http_post(url, body, header, timeout)
         return nil
     end
 
-    -- Table-based commands (Url.HttpPost etc.)
-    if name == "Url.HttpPost"
-       or name == "url.HttpPost"
-       or name == "URL.HttpPost"
-       or name == "Url_HttpPost"
-       or name == "Http.Post"
-       or name == "http.Post" then
+    local function build_request_table()
         local req = { url = url, data = body, code = "UTF-8" }
         if header and header ~= "" then
             local k, v = string.match(header, "([^:]+):%s*(.+)")
             if k then
                 req.header = { [k] = v }
+            else
+                req.header = header
             end
         end
         if timeout then
             req.timeout = timeout
         end
-        local r = handle_results(pcall(f, req))
+        return req
+    end
+
+    -- Table-based commands (Url.HttpPost, URL_OperationPost, NET_httpPost etc.)
+    if name == "Url.HttpPost"
+       or name == "url.HttpPost"
+       or name == "URL.HttpPost"
+       or name == "Url_HttpPost"
+       or name == "Http.Post"
+       or name == "http.Post"
+       or name == "URL_OperationPost"
+       or name == "Url_OperationPost"
+       or name == "url_OperationPost"
+       or name == "NET_httpPost"
+       or name == "Net_httpPost"
+       or name == "net_httpPost" then
+        local r = handle_results(pcall(f, build_request_table()))
         if r then
             return r
         end
