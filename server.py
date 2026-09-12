@@ -22,7 +22,7 @@ import tempfile
 from typing import List, Dict, Any, Optional, Tuple
 
 from flask import Flask, request, jsonify
-from PIL import Image
+from PIL import Image, ImageOps
 import numpy as np
 
 # 日志配置
@@ -38,6 +38,7 @@ app = Flask(__name__)
 # ==================== OCR 引擎初始化 ====================
 
 ocr_rapid: Any = None
+ocr_rapid_force: Any = None
 ocr_tesseract_available: bool = False
 
 
@@ -51,6 +52,18 @@ def init_rapidocr() -> Any:
         return engine
     except Exception as e:
         logger.error(f"RapidOCR 初始化失败: {e}")
+        return None
+
+
+def init_rapidocr_force() -> Any:
+    """初始化强制识别引擎（跳过文字检测，直接识别整张图）"""
+    try:
+        from rapidocr_onnxruntime import RapidOCR
+        engine = RapidOCR(use_text_det=False)
+        logger.info("RapidOCR 强制识别引擎初始化成功")
+        return engine
+    except Exception as e:
+        logger.error(f"RapidOCR 强制识别引擎初始化失败: {e}")
         return None
 
 
@@ -69,8 +82,9 @@ def init_tesseract() -> bool:
 
 def load_engines():
     """加载所有可用的 OCR 引擎"""
-    global ocr_rapid, ocr_tesseract_available
+    global ocr_rapid, ocr_rapid_force, ocr_tesseract_available
     ocr_rapid = init_rapidocr()
+    ocr_rapid_force = init_rapidocr_force()
     ocr_tesseract_available = init_tesseract()
 
     if ocr_rapid is None and not ocr_tesseract_available:
@@ -78,6 +92,7 @@ def load_engines():
     else:
         logger.info(
             f"引擎状态: RapidOCR={ocr_rapid is not None}, "
+            f"RapidOCRForce={ocr_rapid_force is not None}, "
             f"Tesseract={ocr_tesseract_available}"
         )
 
@@ -143,6 +158,53 @@ def rapidocr_recognize(img: Image.Image) -> List[Dict[str, Any]]:
             "center_x": int(cx),
             "center_y": int(cy),
         })
+    return items
+
+
+def preprocess_for_ocr(img: Image.Image) -> Image.Image:
+    """与 UI 一致的图像增强：灰度、暗底反转、自动对比度"""
+    gray = img.convert("L")
+    arr = np.array(gray)
+    if arr.mean() < 128:
+        gray = ImageOps.invert(gray)
+    img = ImageOps.autocontrast(gray, cutoff=0)
+    return img.convert("RGB")
+
+
+def rapidocr_recognize_force(img: Image.Image, enhance: bool = True) -> List[Dict[str, Any]]:
+    """强制识别整张图片，不检测文字位置，返回单行结果"""
+    if ocr_rapid_force is None:
+        raise RuntimeError("RapidOCR 强制识别引擎未加载")
+    if enhance:
+        img = preprocess_for_ocr(img)
+    arr = np.array(img)
+    res, _ = ocr_rapid_force(arr)
+    items = []
+    if res:
+        for line in res:
+            box, text, score = line
+            # box 可能为空；若为空则使用整张图范围
+            if box:
+                xs = [p[0] for p in box]
+                ys = [p[1] for p in box]
+                x, y = min(xs), min(ys)
+                w, h = max(xs) - x, max(ys) - y
+                cx, cy = x + w / 2, y + h / 2
+            else:
+                w, h = img.size
+                x, y = 0, 0
+                cx, cy = w / 2, h / 2
+            items.append({
+                "text": text,
+                "confidence": float(score),
+                "box": [[int(p[0]), int(p[1])] for p in box] if box else [[0, 0], [w, 0], [w, h], [0, h]],
+                "x": int(x),
+                "y": int(y),
+                "w": int(w),
+                "h": int(h),
+                "center_x": int(cx),
+                "center_y": int(cy),
+            })
     return items
 
 
@@ -324,6 +386,34 @@ def ocr_simple_endpoint():
 
     except Exception as e:
         logger.exception("OCR 简单结果处理失败")
+        return f"ERROR\t{str(e)}\n", 500
+
+
+@app.route("/ocr_force", methods=["POST"])
+def ocr_force_endpoint():
+    """强制识别整张图片，适合区域截图、单行文字；默认开启图像增强"""
+    try:
+        img, err = get_request_image()
+        if img is None:
+            return f"ERROR\t{err}\n", 400
+
+        enhance = request.args.get("enhance", "1") in ("1", "true", "True")
+        results = rapidocr_recognize_force(img, enhance=enhance)
+        results.sort(key=lambda r: (r["y"], r["x"]))
+
+        lines = []
+        for r in results:
+            text = str(r["text"]).replace("\t", " ").replace("\n", " ")
+            lines.append(
+                f"{text}\t{r['confidence']:.4f}\t{r['x']}\t{r['y']}\t{r['w']}\t{r['h']}\t{r['center_x']}\t{r['center_y']}"
+            )
+
+        if not lines:
+            return "OK\t0\n"
+        return "OK\t" + str(len(lines)) + "\n" + "\n".join(lines) + "\n"
+
+    except Exception as e:
+        logger.exception("OCR 强制识别处理失败")
         return f"ERROR\t{str(e)}\n", 500
 
 

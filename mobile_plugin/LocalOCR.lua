@@ -537,6 +537,22 @@ function _priv.find_match(results, text, fuzzy)
     return nil
 end
 
+function _priv.ocr_force_str(host_port, image_path)
+    local server = host_port or _priv.default_server
+    local data, err = _priv.read_file(image_path)
+    if not data then
+        return nil, err
+    end
+    local b64 = _priv.base64_encode(data)
+    local body = '{"image":"' .. b64 .. '"}'
+    local header = "Content-Type: application/json"
+    local resp, err2 = _priv.http_post("http://" .. server .. "/ocr_force?enhance=1", body, header, 30)
+    if not resp then
+        return nil, err2
+    end
+    return resp
+end
+
 function LocalOCR.ocr(x1, y1, x2, y2, text, click)
     click = tonumber(click) or 0
     local path = _priv.default_screenshot_path
@@ -544,7 +560,7 @@ function LocalOCR.ocr(x1, y1, x2, y2, text, click)
     if not ok then
         return false
     end
-    local ret, err2 = LocalOCR.RecognizeStr("", path)
+    local ret, err2 = _priv.ocr_force_str("", path)
     if not ret or string.sub(ret, 1, 6) == "ERROR|" then
         return false
     end
@@ -571,7 +587,7 @@ function LocalOCR.ocra(x1, y1, x2, y2, text, click)
     if not ok then
         return false
     end
-    local ret, err2 = LocalOCR.RecognizeStr("", path)
+    local ret, err2 = _priv.ocr_force_str("", path)
     if not ret or string.sub(ret, 1, 6) == "ERROR|" then
         return false
     end
