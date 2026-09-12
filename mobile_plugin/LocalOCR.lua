@@ -607,7 +607,7 @@ function LocalOCR.ocra(x1, y1, x2, y2, text, click)
     return true
 end
 
-function LocalOCR.识别(x1, y1, x2, y2)
+function LocalOCR.ocrText(x1, y1, x2, y2)
     local path = _priv.default_screenshot_path
     local ok, err = _priv.capture_region(path, x1, y1, x2, y2)
     if not ok then
