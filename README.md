@@ -114,59 +114,122 @@ file: screen.png
 }
 ```
 
-## 按键精灵手机助手调用示例
+## 按键精灵手机助手插件
 
-假设 PC 服务端 IP 是 `192.168.1.100:8080`。
+项目已提供 Lua 插件，封装了 HTTP、Base64、JSON 解析，直接调用即可。
 
-### 示例 1：截图后 POST 到服务端识别
+### 插件文件
+
+- `mobile_plugin/LocalOCR.lua`：OCR 调用插件
+- `mobile_plugin/ScanApi.lua`：扫描 `LuaAuxLib` 中 HTTP/文件相关命令（调试用）
+- `install_ocr_plugins.bat`：自动把插件复制到按键精灵插件目录
+
+### 安装插件
+
+把两个 `.lua` 文件复制到按键精灵手机助手的 `plugin` 目录：
+
+| 版本 | 插件目录 |
+|---|---|
+| 安卓版 | `C:\ProgramData\aaj\aaj\Plugin\` |
+| 手机助手/iOS 版 | `C:\Program Files (x86)\nsaj\nsaj\Plugin\` |
+
+推荐双击运行 `install_ocr_plugins.bat`（需要管理员权限），它会自动复制到上述两个目录。
+
+复制后**重启按键精灵手机助手**或刷新插件列表。
+
+### 插件命令
+
+| 命令 | 说明 |
+|---|---|
+| `LocalOCR.SetServer host_port` | 设置默认服务端地址，如 `"192.168.1.101:8080"` |
+| `LocalOCR.Ping host_port` | 测试连通性，返回 `"OK"` 或 `"ERROR|..."` |
+| `LocalOCR.RecognizeStr host_port, image_path` | 识别整张图片，返回 `text\|conf\|x\|y\|w\|h\|cx\|cy;...` |
+| `LocalOCR.FindTextStr host_port, image_path, keyword` | 查找文字，返回 `x\|y\|conf\|text`，未找到返回 `ERROR|...` |
+
+`host_port` 可省略，使用 `SetServer` 设置的默认值。
+
+### 脚本示例
 
 ```vb
-Dim 图片路径 = "/sdcard/screen.png"
-Call CaptureScreen(图片路径)  // 手机截图，保存到路径
+Import "LocalOCR.lua"
 
-// 把图片转成 base64（需有 Base64 编码插件或自己实现）
-Dim base64Img = 文件转Base64(图片路径)
+// 设置为 PC 端服务端 IP，在 OCR 服务端 UI 或 ipconfig 中查看
+LocalOCR.SetServer "192.168.1.101:8080"
 
-Dim url = "http://192.168.1.100:8080/ocr"
-Dim body = "{\"image\":\"" & base64Img & "\"}"
-Dim ret = HttpPost(url, body, "application/json")
+// 1. 先测连通
+Dim ping = LocalOCR.Ping("")
+TracePrint ping
+
+// 2. 截图并识别
+Dim 截图路径 = "/sdcard/screen.png"
+SnapShot 截图路径
+
+Dim ret = LocalOCR.RecognizeStr("", 截图路径)
 TracePrint ret
-```
 
-### 示例 2：查找文字并点击
+// 3. 遍历结果
+Dim lines = Split(ret, ";")
+For i = 0 To UBound(lines)
+    Dim cols = Split(lines(i), "|")
+    If UBound(cols) >= 7 Then
+        Dim text = cols(0)
+        Dim cx = cols(6)
+        Dim cy = cols(7)
+        TracePrint text & " (" & cx & "," & cy & ")"
+    End If
+Next
 
-```vb
-Dim 图片路径 = "/sdcard/screen.png"
-Call CaptureScreen(图片路径)
-Dim base64Img = 文件转Base64(图片路径)
-
-Dim url = "http://192.168.1.100:8080/click_text"
-Dim body = "{\"image\":\"" & base64Img & "\",\"keyword\":\"開始\"}"
-Dim ret = HttpPost(url, body, "application/json")
-
-// 解析 JSON（需有 JSON 解析插件）
-Dim x = JSON_Get(ret, "x")
-Dim y = JSON_Get(ret, "y")
-
-If x <> "" And y <> "" Then
-    Touch x, y
+// 4. 查找文字并点击
+Dim clickRet = LocalOCR.FindTextStr("", 截图路径, "冒險")
+If Left(clickRet, 5) <> "ERROR" Then
+    Dim c = Split(clickRet, "|")
+    Touch c(0), c(1)
+Else
+    TracePrint "未找到"
 End If
 ```
 
-### 示例 3：识别后遍历结果
+### 常见问题
 
-```vb
-Dim ret = HttpPost(url, body, "application/json")
-Dim count = JSON_Get(ret, "count")
-For i = 1 To count
-    Dim text = JSON_Get(ret, "results[" & i & "].text")
-    Dim cx = JSON_Get(ret, "results[" & i & "].center_x")
-    Dim cy = JSON_Get(ret, "results[" & i & "].center_y")
-    TracePrint text & " (" & cx & "," & cy & ")"
-Next
+1. **导入插件后崩溃/报错**
+   - `Import "LocalOCR.lua"` 必须放在脚本**第 1 行**。
+   - 插件使用兼容 Lua 5.2 语法，顶层局部变量不超过 200 个。
+
+2. **`ERROR|HTTP POST failed: server returned empty`**
+   - 服务端未启动，或手机与 PC 不在同一局域网。
+   - 检查 PC 防火墙是否放行 8080 端口。
+   - 确认 IP 是 PC 的真实局域网 IP（`ipconfig` 查看）。
+
+3. **查看可用的 HTTP 命令**
+   ```vb
+   Import "ScanApi.lua"
+   TracePrint ScanApi.Scan()
+   ```
+
+## 打包版 EXE（无需 Python）
+
+已提供 PyInstaller 一键打包脚本，可在没有 Python 的 Windows 机器上直接运行。
+
+### 1. 服务端打包版
+
+- 入口：`dist\OCR_Server\OCR_Server.exe`
+- 把整个 `dist\OCR_Server` 文件夹复制到目标电脑，双击 `OCR_Server.exe` 即可启动
+- 启动后会监听 `0.0.0.0:8080`，黑色命令行窗口是日志，不要关闭
+- 目标电脑需放行 8080 端口防火墙
+
+### 2. 桌面测试/管理端打包版
+
+- 入口：`dist\OCR_UI\OCR_UI.exe`
+- 把整个 `dist\OCR_UI` 文件夹复制到目标电脑，双击 `OCR_UI.exe` 可打开桌面 UI
+- UI 中可加载图片测试识别、截图选区、查看服务端 IP 与接口示例
+
+### 重新打包
+
+```powershell
+cd C:\Users\user\Desktop\ocr
+python -m PyInstaller --noconfirm server.spec
+python -m PyInstaller --noconfirm OCR_UI.spec
 ```
-
-> 注：按键精灵里的 `文件转Base64`、`HttpPost`、`JSON_Get`、`Touch` 等函数名称取决于你实际使用的插件/扩展命令，请替换成你环境里真实存在的命令。
 
 ## 环境变量
 
